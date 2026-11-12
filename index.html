@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clipea</title>
+<meta name="description" content="Clipea: editor de vídeo en el navegador para el aula">
+<meta name="author" content="Juan Luis Torralbo Muñoz">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%237c5cff'/><path d='M24 18l24 14-24 14z' fill='white'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bangers&family=Bebas+Neue&family=Caveat:wght@400;700&family=Comic+Neue:wght@400;700&family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700&family=Lobster&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400;700&family=Oswald:wght@400;700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&family=Righteous&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Shadows+Into+Light&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Pantalla de inicio -->
+<div id="home" class="screen">
+  <div class="home-inner">
+    <header class="home-head">
+      <div class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5l12 7-12 7z" fill="currentColor"/></svg></span><div><h1 id="appName">Clipea</h1><p id="appTagline">Crea, monta y exporta tus vídeos desde el navegador</p></div></div>
+      <button id="btnHomeHelp" class="btn ghost">Ayuda</button>
+    </header>
+    <div id="compat" class="warn hidden">Este navegador no puede exportar vídeo. Abre esta página con <b>Google Chrome</b> o <b>Microsoft Edge</b> actualizados.</div>
+    <div class="home-actions">
+      <button id="btnNew" class="new-card"><span class="plus">+</span><b>Nuevo proyecto</b><span>Empieza un vídeo desde cero</span></button>
+      <button id="btnOpenFile" class="new-card alt"><span class="plus">⇪</span><b>Abrir archivo de proyecto</b><span>Continúa un .vproj traído de otro ordenador</span></button>
+    </div>
+    <h2 class="home-sub">Empezar con una plantilla</h2>
+    <div id="homeTpls" class="home-tpls"></div>
+    <h2 class="home-sub">Mis proyectos</h2>
+    <div id="projGrid" class="proj-grid"></div>
+    <p class="home-foot">Tus vídeos no se suben a internet: todo se guarda y procesa en este ordenador.</p>
+    <p class="home-credit" id="appCredit">Clipea · creado por Juan Luis Torralbo Muñoz</p>
+  </div>
+</div>
+
+<!-- Editor -->
+<div id="app" class="screen hidden">
+  <header class="topbar">
+    <button id="btnHome" class="icon-btn" title="Volver a mis proyectos"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button>
+    <span class="logo-mark sm"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M8 5l12 7-12 7z" fill="currentColor"/></svg></span>
+    <input id="projName" class="proj-name" spellcheck="false" title="Nombre del proyecto">
+    <span id="saveState" class="save-state saved"></span>
+    <span class="top-credit" id="topCredit" title="Autor del editor"></span>
+    <div class="spacer"></div>
+    <button id="btnUndo" class="icon-btn" title="Deshacer (Ctrl+Z)" disabled><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
+    <button id="btnRedo" class="icon-btn" title="Rehacer (Ctrl+Y)" disabled><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
+    <button id="btnSettings" class="btn ghost sm" title="Formato y fondo del proyecto">Proyecto</button>
+    <button id="btnSaveFile" class="btn ghost sm" title="Descargar el proyecto como archivo .vproj para llevarlo a otro ordenador"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>Guardar archivo</button>
+    <button id="btnHelp" class="icon-btn" title="Ayuda y atajos"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+    <button id="btnExport" class="btn primary"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>Exportar</button>
+  </header>
+  <div class="main">
+    <nav id="rail" class="rail"></nav>
+    <aside id="leftPanel" class="panel"></aside>
+    <section class="stage">
+      <div class="preview-wrap">
+        <div class="preview-box">
+          <div class="canvas-holder"><canvas id="preview"></canvas><canvas id="overlay"></canvas></div>
+        </div>
+      </div>
+      <div class="transport">
+        <div class="t-left"><span id="tCur" class="tc">00:00.00</span><span class="tc dim">/</span><span id="tDur" class="tc dim">00:00.00</span></div>
+        <div class="t-center">
+          <button id="btnStart" class="icon-btn" title="Ir al principio (Inicio)"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z"/><path d="M3 20V4"/></svg></button>
+          <button id="btnPrev" class="icon-btn" title="Fotograma anterior (←)">‹</button>
+          <button id="btnPlay" class="play-btn" title="Reproducir / pausar (Espacio)"><svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg></button>
+          <button id="btnNext" class="icon-btn" title="Fotograma siguiente (→)">›</button>
+          <button id="btnEnd" class="icon-btn" title="Ir al final (Fin)"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4v16"/><path d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z"/></svg></button>
+        </div>
+        <div class="t-right">
+          <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/></svg>
+          <input id="vol" type="range" min="0" max="1" step="0.01" value="1" title="Volumen de la vista previa">
+          <select id="quality" class="inp sm" title="Calidad de la vista previa (más baja = más fluida)"><option value="1">Alta</option><option value="0.75" selected>Media</option><option value="0.5">Baja</option></select>
+          <button id="btnFull" class="icon-btn" title="Pantalla completa"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+        </div>
+      </div>
+    </section>
+    <aside id="inspector" class="inspector"></aside>
+  </div>
+  <div id="tlResizer" class="resizer" title="Arrastra para cambiar la altura"></div>
+  <section id="timeline" class="timeline"></section>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toasts"></div>
+<div id="hiddenMedia" aria-hidden="true"></div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

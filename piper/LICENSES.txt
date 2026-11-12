@@ -1,4 +1,0 @@
-ONNX Runtime Web 1.18.0 - Copyright (c) Microsoft Corporation. Licensed under the MIT License.
-https://github.com/microsoft/onnxruntime/blob/main/LICENSE
-
-piper-phonemize / piper-wasm (Diffusion Studio, MIT) - https://github.com/diffusionstudio/vits-web
